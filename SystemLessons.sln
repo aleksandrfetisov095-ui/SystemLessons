@@ -9,6 +9,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SixLessons", "SixLessons\Si
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SevenLesson", "SevenLesson\SevenLesson.csproj", "{3662C347-E135-4A46-981B-B57BCAFB3EC0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EightLesson", "EightLesson\EightLesson.csproj", "{338A775E-12FC-47AF-81C4-BD0569F5B36C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmailValidator", "EmailValidator\EmailValidator.csproj", "{B5447549-F465-48F5-B587-A57596266042}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +31,14 @@ Global
 		{3662C347-E135-4A46-981B-B57BCAFB3EC0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3662C347-E135-4A46-981B-B57BCAFB3EC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3662C347-E135-4A46-981B-B57BCAFB3EC0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{338A775E-12FC-47AF-81C4-BD0569F5B36C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{338A775E-12FC-47AF-81C4-BD0569F5B36C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{338A775E-12FC-47AF-81C4-BD0569F5B36C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{338A775E-12FC-47AF-81C4-BD0569F5B36C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B5447549-F465-48F5-B587-A57596266042}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B5447549-F465-48F5-B587-A57596266042}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B5447549-F465-48F5-B587-A57596266042}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B5447549-F465-48F5-B587-A57596266042}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
