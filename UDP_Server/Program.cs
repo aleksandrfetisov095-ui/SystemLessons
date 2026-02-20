@@ -15,12 +15,12 @@ using (var connection = new SqlConnection(connectionString))
 {
     connection.Open();
 
-    // Создаем таблицу (если её нет)
-    var createTable = connection.CreateCommand();
+    
+    var createTable = connection.CreateCommand(); //создание объекта, через который можно отправлять SQL-запросы в базу данных
     createTable.CommandText = @"
         IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='messages' AND xtype='U')
         CREATE TABLE messages (
-            id INT IDENTITY(1,1) PRIMARY KEY,
+            id INT IDENTITY(1,1) PRIMARY KEY, 
             text NVARCHAR(MAX) NOT NULL,
             time DATETIME NOT NULL
         )";
@@ -47,9 +47,9 @@ while (true)
         using (var connection = new SqlConnection(connectionString))
         {
             connection.Open();
-            var insert = connection.CreateCommand();
-            insert.CommandText = "INSERT INTO messages (text, time) VALUES (@text, @time)";
-            insert.Parameters.AddWithValue("@text", message);
+            var insert = connection.CreateCommand(); 
+            insert.CommandText = "INSERT INTO messages (text, time) VALUES (@text, @time)"; //добавление новой записи в таблицу 
+            insert.Parameters.AddWithValue("@text", message); // добавление параметров со значением
             insert.Parameters.AddWithValue("@time", DateTime.Now);
             insert.ExecuteNonQuery();
         }
