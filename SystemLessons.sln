@@ -31,6 +31,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "homework_client", "homework
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "http_app_client", "http_app_client\http_app_client.csproj", "{2F6A21E5-9B47-481E-BEA4-DA69F752C9B1}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "homework_server", "homework_server", "{C013C24F-7D01-46B9-A616-D5AB3C10A9E3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HttpServer", "HttpServer\HttpServer.csproj", "{C95A21DC-A310-4C56-94B3-FC7BBA08A40E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -81,6 +85,10 @@ Global
 		{2F6A21E5-9B47-481E-BEA4-DA69F752C9B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2F6A21E5-9B47-481E-BEA4-DA69F752C9B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2F6A21E5-9B47-481E-BEA4-DA69F752C9B1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C95A21DC-A310-4C56-94B3-FC7BBA08A40E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C95A21DC-A310-4C56-94B3-FC7BBA08A40E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C95A21DC-A310-4C56-94B3-FC7BBA08A40E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C95A21DC-A310-4C56-94B3-FC7BBA08A40E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -92,6 +100,7 @@ Global
 		{5FF4CF4A-288A-4716-984A-E7277306BC0E} = {4CD72A89-57D3-45BB-B033-1AAC8A15543A}
 		{C8E09366-B00A-4451-8C53-26B4E69ADCF0} = {4CD72A89-57D3-45BB-B033-1AAC8A15543A}
 		{2F6A21E5-9B47-481E-BEA4-DA69F752C9B1} = {F8C47611-CB6D-46F0-8C4B-F9F03CAEB1A3}
+		{C95A21DC-A310-4C56-94B3-FC7BBA08A40E} = {C013C24F-7D01-46B9-A616-D5AB3C10A9E3}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {1458DA44-B5C8-43C1-AEC1-C9DE8CBB9974}
