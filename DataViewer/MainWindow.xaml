@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:DataViewer"
         mc:Ignorable="d"
         Title="Просмотр данных" Height="600" Width="900">
+    
     <Grid Margin="15">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -13,69 +14,68 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
+
+        
         <TextBlock Text=" UDP Монитор сообщений" 
                    FontSize="20" 
                    FontWeight="Bold" 
                    Margin="0,0,0,15"/>
 
+        
         <Border Grid.Row="1" 
-                Background="#f0f0f0" 
+                Background="White" 
                 Padding="10" 
                 CornerRadius="5"
                 Margin="0,0,0,15">
             <StackPanel Orientation="Horizontal">
-                <Button Content=" Загрузить из БД" 
-                        Click="LoadFromDatabase_Click"
-                        Padding="15,8" 
+                <Button Content=" Загрузить с сервера" 
+                        Click="LoadFromServer_Click"  
+                    Padding="15,8" 
                         Margin="0,0,10,0"
-                        Background="#3498db" 
+                        Background="Blue" 
                         Foreground="White"
                         BorderThickness="0"
-                        Cursor="Hand">
-                    <Button.Resources>
-                        <Style TargetType="Border">
-                            <Setter Property="CornerRadius" Value="3"/>
-                        </Style>
-                    </Button.Resources>
-                </Button>
+                        Cursor="Hand"/>
+
 
                 <Button Content=" Экспорт в CSV" 
                         Click="ExportToCsv_Click"
                         Padding="15,8" 
                         Margin="0,0,10,0"
-                        Background="#27ae60" 
+                        Background="Green" 
                         Foreground="White"
                         BorderThickness="0"
                         Cursor="Hand"/>
-
                 <Button Content=" Отправить тестовые данные" 
                         Click="SendTestData_Click"
                         Padding="15,8" 
                         Margin="0,0,10,0"
-                        Background="#f39c12" 
+                        Background="Orange" 
                         Foreground="White"
                         BorderThickness="0"
                         Cursor="Hand"/>
 
-                <Button Content=" Очистить БД" 
-                        Click="ClearDatabase_Click"
+                    
+                    <Button Content=" Очистить на сервере" 
+                        Click="ClearServerData_Click"  
                         Padding="15,8"
-                        Background="#e74c3c" 
+                        Background="Red" 
                         Foreground="White"
                         BorderThickness="0"
                         Cursor="Hand"/>
             </StackPanel>
         </Border>
 
-        <!-- Таблица с данными -->
+       
         <DataGrid Grid.Row="2" 
                   x:Name="MessagesDataGrid"
                   AutoGenerateColumns="False"
                   IsReadOnly="True"
-                  AlternatingRowBackground="#f9f9f9"
-                  BorderBrush="#ddd"
+                  AlternatingRowBackground="White"
+                  BorderBrush="White"
                   BorderThickness="1"
-                  SelectionMode="Single" SelectionChanged="MessagesDataGrid_SelectionChanged">
+                  SelectionMode="Single">
+            
 
             <DataGrid.Columns>
                 <DataGridTextColumn Header="ID" 
@@ -90,9 +90,8 @@
             </DataGrid.Columns>
         </DataGrid>
 
-        <!-- Статус бар -->
         <Border Grid.Row="3" 
-                Background="#ecf0f1" 
+                Background="White" 
                 Padding="10" 
                 CornerRadius="5" 
                 Margin="0,15,0,0">
@@ -101,7 +100,7 @@
                         VerticalAlignment="Center">
                 <TextBlock x:Name="StatusText" 
                            Text="Готов к работе" 
-                           Foreground="#7f8c8d"
+                           Foreground="White"
                            VerticalAlignment="Center"/>
 
                 <TextBlock x:Name="CounterText" 

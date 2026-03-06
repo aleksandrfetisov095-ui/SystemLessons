@@ -9,12 +9,12 @@ int port = 5555;
 
 try
 {
-    using (var connection = new SqlConnection(connectionString))
+    using (var connection = new SqlConnection(connectionString)) // подключение к SQL Server
     {
         connection.Open();
         Console.WriteLine("Подключение к БД успешно");
 
-        var checkTable = connection.CreateCommand();
+        var checkTable = connection.CreateCommand(); //создание объекта, через который можно отправлять SQL-запросы в базу данных
         checkTable.CommandText = @"
             IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='messages' AND xtype='U')
             CREATE TABLE messages (
@@ -39,15 +39,15 @@ try
     {
         try
         {
-            // Буфер для получения данных
-            byte[] buffer = new byte[1024];
-            EndPoint clientEndPoint = new IPEndPoint(IPAddress.Any, 0);
+            // строки для получения данных по UDP
+            byte[] buffer = new byte[1024]; // контейнер для получения данных
+            EndPoint clientEndPoint = new IPEndPoint(IPAddress.Any, 0); // все,порт не важен
 
             // Получаем данные
-            var result = udpSocket.ReceiveFrom(buffer, ref clientEndPoint);
+            var result = udpSocket.ReceiveFrom(buffer, ref clientEndPoint); 
             string message = Encoding.UTF8.GetString(buffer, 0, result);
 
-            string clientInfo = clientEndPoint.ToString(); // ip_adress, порт
+            string clientInfo = clientEndPoint.ToString();// Преобразует адрес клиента в строку
             Console.WriteLine($"[{DateTime.Now:HH:mm:ss}] Получено: '{message}' от {clientInfo}");
 
             //сохранение в бд
@@ -61,7 +61,7 @@ try
                 insert.Parameters.AddWithValue("@time", DateTime.Now);
 
                 insert.ExecuteNonQuery();
-                Console.WriteLine($"  -> Сохранено в БД");
+                Console.WriteLine($" Сохранено в БД");
             }
 
             //сохранение в файл
@@ -77,7 +77,7 @@ try
 }
 catch (Exception ex)
 {
-    Console.WriteLine($"Критическая ошибка: {ex.Message}");
-    Console.WriteLine("Нажмите любую клавишу для выхода...");
+    Console.WriteLine($"ERROR: {ex.Message}");
+    Console.WriteLine("Нажмите любую кнопку для выхода...");
     Console.ReadKey();
 }

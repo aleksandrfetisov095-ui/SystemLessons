@@ -1,6 +1,9 @@
-﻿using System;
+﻿using DataViewer.Models;
+using Microsoft.Data.SqlClient;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Configuration;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
@@ -8,76 +11,45 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
-using Microsoft.Data.SqlClient;
 
 namespace DataViewer
 {
     public partial class MainWindow : Window
     {
-        
-        private string connectionString = "Server=DESKTOP-Q5BCN1Q;Database=P_320_CompanyDB_Fetisov;Trusted_Connection=True;";
-        private string serverIp = "127.0.0.1";
-        private int serverPort = 5555;
-
-        // для хранения сообщений
-        private List<MessageItem> messages = new List<MessageItem>();
+        private List<MessageDisplay> messages = new List<MessageDisplay>();
+        private readonly UdpClientService _udpService;
 
         public MainWindow()
         {
             InitializeComponent();
-            LoadMessagesAsync();
+            string serverIp = ConfigurationManager.AppSettings["ServerIp"] ?? "127.0.0.1";
+            int serverPort = int.Parse(ConfigurationManager.AppSettings["ServerPort"] ?? "5555");
+            _udpService = new UdpClientService(serverIp, serverPort);
+
+            _ = LoadMessagesFromServerAsync();
         }
 
-        
-        // работа с бд
-        private async void LoadFromDatabase_Click(object sender, RoutedEventArgs e) // загрузить из бд
-        {
-            await LoadMessagesAsync();
-        }
-
-        private async Task LoadMessagesAsync() // получение данных из бд и отображение
+       
+        private async Task LoadMessagesFromServerAsync()
         {
             try
             {
-                StatusText.Text = "Загрузка данных из БД...";
+                StatusText.Text = "Запрос данных с сервера...";
                 LoadingProgressBar.Visibility = Visibility.Visible;
 
-                messages.Clear();
+                messages = await _udpService.GetAllMessagesAsync();
 
-                using (var connection = new SqlConnection(connectionString))
-                {
-                    await connection.OpenAsync();
-
-                    var command = new SqlCommand(
-                        "SELECT id, text, time FROM messages ORDER BY time DESC",
-                        connection);
-
-                    using (var reader = await command.ExecuteReaderAsync())
-                    {
-                        while (await reader.ReadAsync())
-                        {
-                            messages.Add(new MessageItem
-                            {
-                                Id = reader.GetInt32(0),
-                                Content = reader.GetString(1),  
-                                ReceivedTime = reader.GetDateTime(2) 
-                                
-                            });
-                        }
-                    }
-                }
-
-                // Обновление таблицы
+                // Обновляем таблицу
                 MessagesDataGrid.ItemsSource = null;
                 MessagesDataGrid.ItemsSource = messages;
 
-                // Обновление счетчика
+                // Обновляем счетчик
                 CounterText.Text = $"Всего записей: {messages.Count}";
                 StatusText.Text = $"Загружено {messages.Count} записей";
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка загрузки из БД: {ex.Message}", "Ошибка",
+                MessageBox.Show($"Ошибка загрузки: {ex.Message}", "Ошибка",
                     MessageBoxButton.OK, MessageBoxImage.Error);
                 StatusText.Text = "Ошибка загрузки";
             }
@@ -88,8 +60,13 @@ namespace DataViewer
         }
 
         
-        //работа с файлами
-        private void ExportToCsv_Click(object sender, RoutedEventArgs e) // экспорт в эксель
+        private async void LoadFromServer_Click(object sender, RoutedEventArgs e)
+        {
+            await LoadMessagesFromServerAsync();
+        }
+
+        
+        private void ExportToCsv_Click(object sender, RoutedEventArgs e)
         {
             if (messages.Count == 0)
             {
@@ -114,10 +91,8 @@ namespace DataViewer
                     LoadingProgressBar.Visibility = Visibility.Visible;
 
                     var sb = new StringBuilder();
-
                     sb.AppendLine("ID;Сообщение;Время получения");
 
-                    // Данные
                     foreach (var msg in messages)
                     {
                         string content = msg.Content.Replace("\"", "\"\"");
@@ -129,7 +104,6 @@ namespace DataViewer
                         sb.AppendLine($"{msg.Id};{content};{msg.ReceivedTime:yyyy-MM-dd HH:mm:ss}");
                     }
 
-                    // Сохраняем в файл
                     File.WriteAllText(dialog.FileName, sb.ToString(), Encoding.UTF8);
 
                     StatusText.Text = $"Экспорт завершен: {System.IO.Path.GetFileName(dialog.FileName)}";
@@ -149,45 +123,30 @@ namespace DataViewer
             }
         }
 
-        // работа с сетью
-
-        private async void SendTestData_Click(object sender, RoutedEventArgs e) // отправка данных
+      
+        private async void SendTestData_Click(object sender, RoutedEventArgs e)
         {
             try
             {
                 StatusText.Text = "Отправка тестовых данных...";
                 LoadingProgressBar.Visibility = Visibility.Visible;
 
-                using (var udpClient = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp))
+                var testMessages = _udpService.GetTestMessages();
+
+                foreach (var msg in testMessages)
                 {
-                    var serverEndPoint = new IPEndPoint(IPAddress.Parse(serverIp), serverPort);
-
-                    string[] testMessages = new[]
-                    {
-                        "Привет от WPF клиента!",
-                        $"Тестовое сообщение {DateTime.Now:HH:mm:ss}",
-                        "UDP работает!",
-                        "Курсовой проект",
-                        $"Случайное число: {new Random().Next(1, 100)}"
-                    };
-
-                    foreach (var msg in testMessages)
-                    {
-                        byte[] data = Encoding.UTF8.GetBytes(msg);
-                        udpClient.SendTo(data, serverEndPoint); // Синхронная отправка
-
-                        StatusText.Text = $"Отправлено: {msg}";
-                        await Task.Delay(500);
-                    }
+                    _udpService.SendMessage(msg);
+                    StatusText.Text = $"Отправлено: {msg}";
+                    await Task.Delay(500);
                 }
 
                 StatusText.Text = "Тестовые данные отправлены";
                 await Task.Delay(1000);
-                await LoadMessagesAsync();
+                await LoadMessagesFromServerAsync();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка отправки: {ex.Message}\n\nУбедитесь, что сервер запущен!",
+                MessageBox.Show($"Ошибка отправки: {ex.Message}\n\nУбедитесь, что сервер NEW_SERVER запущен!",
                     "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
                 StatusText.Text = "Ошибка отправки";
             }
@@ -197,12 +156,11 @@ namespace DataViewer
             }
         }
 
-        // очистка бд
-
-        private async void ClearDatabase_Click(object sender, RoutedEventArgs e)
+       
+        private async void ClearServerData_Click(object sender, RoutedEventArgs e)
         {
             var result = MessageBox.Show(
-                "Вы уверены, что хотите очистить все сообщения из базы данных?",
+                "Вы уверены, что хотите очистить все сообщения на сервере?",
                 "Подтверждение очистки",
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Warning);
@@ -211,24 +169,17 @@ namespace DataViewer
             {
                 try
                 {
-                    StatusText.Text = "Очистка базы данных...";
+                    StatusText.Text = "Очистка данных на сервере...";
                     LoadingProgressBar.Visibility = Visibility.Visible;
 
-                    using (var connection = new SqlConnection(connectionString))
-                    {
-                        await connection.OpenAsync();
+                    int deletedCount = await _udpService.ClearAllMessagesAsync();
 
-                        var command = new SqlCommand("DELETE FROM messages", connection);
-                        int deletedCount = await command.ExecuteNonQueryAsync();
-
-                        StatusText.Text = $"Удалено записей: {deletedCount}";
-                    }
-
-                    await LoadMessagesAsync();
+                    StatusText.Text = $"Удалено записей: {deletedCount}";
+                    await LoadMessagesFromServerAsync();
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Ошибка очистки БД: {ex.Message}", "Ошибка",
+                    MessageBox.Show($"Ошибка очистки: {ex.Message}", "Ошибка",
                         MessageBoxButton.OK, MessageBoxImage.Error);
                 }
                 finally
@@ -237,18 +188,5 @@ namespace DataViewer
                 }
             }
         }
-
-        private void MessagesDataGrid_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
-        {
-
-        }
-    }
-
-    public class MessageItem
-    {
-        public int Id { get; set; }
-        public string Content { get; set; } 
-        public DateTime ReceivedTime { get; set; }
-       
     }
 }
