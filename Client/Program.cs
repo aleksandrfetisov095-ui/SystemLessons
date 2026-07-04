@@ -11,7 +11,7 @@ public class Program
     {
         Console.WriteLine("Клиент запущен");
 
-        //Сериалоизация и десериализация
+        
 
         var ipAddress = new IPAddress(arrayIpAddress);
         var ipEndPoint = new IPEndPoint(ipAddress, port);
