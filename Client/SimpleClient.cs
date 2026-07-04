@@ -10,13 +10,10 @@ public class SimpleClient
     private readonly IPEndPoint _ipEndPoint;
     private const int defaultSizeBuffer = 1024;
     private int _sizeBuffer;
-
     public SimpleClient(IPEndPoint ipEndPoint)
     {
         ArgumentException.ThrowIfNullOrEmpty(nameof(IPEndPoint), $"Argument {nameof(ipEndPoint)} is null");
-
         _ipEndPoint = ipEndPoint;
-
         _sizeBuffer = defaultSizeBuffer;
     }
 
